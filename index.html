@@ -14,10 +14,11 @@
     nav{overflow:hidden;margin:2em 0;}
     form{float:left;}
     li{list-style:none;}
-    ul{margin:1em 0;background:rgba(0,0,0,0.7);width:15em;padding:1em;border-radius:10px;}
+    ul{margin:1em 0;background:rgba(0,0,0,0.7);width:15em;
+       padding:1em;border-radius:10px;}
     h1{color:#fff;font-weight:normal;}
-    footer{clear:both;font-size:12px;padding:2em 0}
-    footer a{color:lime;}
+    footer{clear:both;font-size:12px;padding:2em 0;color:#666}
+    footer a{color:#ccc;}
   </style>
 </head>
 <body>
@@ -33,8 +34,10 @@
   </form></section>
   <footer>
   <p>Written by 
-    <a href="http://wait-till-i.com/">Chris Heilmann</a> - 
-    <a href="http://twitter.com/codepo8">@codepo8</a>
+    <a href="http://wait-till-i.com/">Chris Heilmann</a> 
+    (<a href="http://twitter.com/codepo8">@codepo8</a>) - 
+    <a href="https://github.com/codepo8/calculated-shadow">get source</a> - 
+    <a href="">read the blog post</a>
   </p></footer>
 <script>
 
@@ -167,7 +170,7 @@ canvas.addEventListener( 'mousemove', function( event ) {
   }  
 }, false );
 
-document.querySelector( '#animate' ).addEventListener( 'click', draw, false);
+document.querySelector( '#animate' ).addEventListener( 'click', draw, false );
 
 </script>
 
