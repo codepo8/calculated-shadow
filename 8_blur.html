@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculating blur with distance</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+  <header><h1>Calculating blur with distance</h1></header>
+  <canvas></canvas>
+  <nav><h2>Go to step:</h2> <ol><li><a href="1_simple.html">1</a></li>
+  <li><a href="2_wiping.html">2</a></li>
+  <li><a href="3_translation.html">3</a></li>
+  <li><a href="4_centerline.html">4</a></li>
+  <li><a href="5_opposingline.html">5</a></li>
+  <li><a href="6_opposingline_factored.html">6</a></li>
+  <li><a href="7_shadow.html">7</a></li>
+  <li><strong>8</strong></li>
+  <li><a href="9_shadow_blur.html">9</a></li>
+  <li><a href="10_auto.html">10</a></li></ol></nav>
+  
+<script>
+// grab the canvas element, get the context for API access and 
+// preset some variables
+var canvas = document.querySelector( 'canvas' ),
+    c = canvas.getContext( '2d' ),
+    mouseX = 0,
+    mouseY = 0,
+    width = 300,
+    height = 300,
+    distx = 0,
+    disty = 0,
+    hw = width / 2,
+    hh = height / 2,
+    longest = Math.sqrt( ( hw * hw ) + ( hh * hh ) ),
+    factor = 0.4,
+    realdistance = 0,
+    blur = [ 2, 9 ],
+    blurfactor = blur[1] / longest;
+
+// resize the canvas
+canvas.width = width;
+canvas.height = height;
+
+function draw() {
+
+  // calculate the distance caused by the offset
+  distx = mouseX - hw;
+  disty = mouseY - hh;
+  realdistance = Math.sqrt( ( distx * distx ) + ( disty * disty ) );
+  var currentblur = parseInt( blurfactor * realdistance, 10 );
+  if ( currentblur < blur[ 0 ] ) {currentblur = blur[0];}
+
+  c.clearRect( 0, 0, width, height );
+  c.save();
+  c.translate( hw, hh );
+  c.beginPath();
+  c.strokeStyle = 'rgba(255,255,255,0.3)';
+  c.moveTo( 0, 0 );
+  c.lineTo( distx, disty );
+  c.closePath();
+  c.stroke();
+
+  c.beginPath();
+  c.strokeStyle = 'red';
+  c.moveTo( 0, 0 );
+  c.lineTo( -distx * factor, -disty * factor );
+  c.closePath();
+  c.stroke();
+
+  c.beginPath();
+  c.shadowOffsetX = -distx * factor;
+  c.shadowOffsetY = -disty * factor;
+  c.shadowBlur = currentblur;
+  c.shadowColor = 'rgba(0,0,0,0.4)';
+  c.fillStyle = 'lime';
+  var text = 'Text with shadow';
+  c.font = "bold 24px sans-serif";
+  var len = c.measureText( text );
+  c.fillText( text, -len.width/2, 12 );
+  c.closePath();
+
+  var grd = c.createRadialGradient(distx+10,disty-10,3,distx+10,disty-10,40);
+  grd.addColorStop(0, "white");
+  grd.addColorStop(1, "orange");
+  c.fillStyle = grd;  
+  c.shadowColor = 'rgba(0,0,0,0)';
+  c.beginPath();
+  c.arc( distx, disty, 20 , 0, Math.PI*2, true );
+  c.closePath();
+  c.fill();
+  c.restore();
+
+}
+
+// get the mouse position on the canvas (some browser trickery involved)
+canvas.addEventListener( 'mousemove', function( event ) {
+  if( event.offsetX ){
+    mouseX = event.offsetX;
+    mouseY = event.offsetY;
+  } else {
+    mouseX = event.pageX - event.target.offsetLeft;
+    mouseY = event.pageY - event.target.offsetTop;
+  }
+  // call the draw function
+  draw();
+}, false );
+
+</script>
+
+</body>
+</html>

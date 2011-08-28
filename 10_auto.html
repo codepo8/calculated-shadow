@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animating blurred and alpha shadow</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+  <header><h1>Animating blurred and alpha shadow</h1></header>
+  <canvas></canvas>
+
+<script>
+
+if ( !window.requestAnimationFrame ) {
+  window.requestAnimationFrame = ( function() {
+    return window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
+      window.setTimeout( callback, 1000 / 60 );
+    };
+  } )();
+}
+
+// grab the canvas element, get the context for API access and 
+// preset some variables
+var canvas = document.querySelector( 'canvas' ),
+    c = canvas.getContext( '2d' ),
+    mouseX = 0,
+    mouseY = 0,
+    width = 300,
+    height = 300,
+    distx = 0,
+    disty = 0,
+    hw = width / 2,
+    hh = height / 2,
+    longest = Math.sqrt( ( hw * hw ) + ( hh * hh ) ),
+    factor = 0.4,
+    realdistance = 0,
+    blur = [ 2, 9 ],
+    shadowalpha = [ 3, 8 ],
+    blurfactor = blur[1] / longest,
+    shadowfactor = shadowalpha[1] / longest,
+    increase = 0;
+
+// resize the canvas
+canvas.width = width;
+canvas.height = height;
+
+draw();
+
+function draw() {
+
+  // calculate the distance caused by the offset
+  distx = mouseX - hw;
+  disty = mouseY - hh;
+
+  increase+=0.03;
+  var distx = 80 * Math.cos(increase) + 60 * Math.cos(increase*2);
+  var disty = 100 * Math.sin(increase*2) + 20 * Math.cos(increase);
+
+  realdistance = Math.sqrt( ( distx * distx ) + ( disty * disty ) );
+  var currentblur = parseInt( blurfactor * realdistance, 10 );
+  if ( currentblur < blur[ 0 ] ) {currentblur = blur[0];}
+  var currentalpha = parseInt( shadowfactor * realdistance, 10 );
+  if ( currentalpha < shadowalpha[ 0 ] ) { currentalpha = shadowalpha[0]; }
+
+  c.clearRect( 0, 0, width, height );
+  c.save();
+  c.translate( hw, hh);
+  
+  c.beginPath();
+  c.shadowOffsetX = -distx * factor;
+  c.shadowOffsetY = -disty * factor;
+  c.shadowBlur = currentblur;
+  c.shadowColor = 'rgba(0,0,0,' + (1 - currentalpha / 10)  + ')';
+  c.fillStyle = 'lime';
+  var text = 'Text with shadow';
+  c.font = "bold 24px sans-serif";
+  var len = c.measureText( text );
+  c.fillText( text, -len.width / 2, 12 );
+  c.closePath();
+
+  var grd = c.createRadialGradient(distx+10,disty-10,3,distx+10,disty-10,40);
+  grd.addColorStop(0, "white");
+  grd.addColorStop(1, "orange");
+  c.fillStyle = grd;  
+  c.shadowColor = 'rgba(0,0,0,0)';
+  c.beginPath();
+  c.arc( distx, disty, 20 , 0, Math.PI*2, true );
+  c.closePath();
+  c.fill();
+  c.restore();
+  requestAnimationFrame( draw, 10 );
+
+}
+
+
+
+
+
+</script>
+
+<nav><h2>Go to step:</h2> <ol><li><a href="1_simple.html">1</a></li>
+<li><a href="2_wiping.html">2</a></li>
+<li><a href="3_translation.html">3</a></li>
+<li><a href="4_centerline.html">4</a></li>
+<li><a href="5_opposingline.html">5</a></li>
+<li><a href="6_opposingline_factored.html">6</a></li>
+<li><a href="7_shadow.html">7</a></li>
+<li><a href="8_blur.html">8</a></li>
+<li><a href="9_shadow_blur.html">9</a></li>
+<li><strong>10</strong></li></ol></nav>
+
+</body>
+</html>
